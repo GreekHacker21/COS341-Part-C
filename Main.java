@@ -47,6 +47,10 @@ public class Main {
         }
         semanticRules.displayProcTable();
         semanticRules.displayVarTable();
+        // Create a new intermediate code generator
+        IntermediateCodeGenerator generator = new IntermediateCodeGenerator(root, leafNodes, scopeInfo, semanticRules.ProcedureTable, semanticRules.VariableTable);
+        // Generate the intermediate code
+        generator.generate();
 
     }
 
