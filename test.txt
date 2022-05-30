@@ -1,0 +1,9 @@
+main{
+    number1 := 10;
+    number2 := 5;
+    number1 := add(number1,number2);
+    output := number1;
+    halt;
+    num number1;
+    num number2;
+}

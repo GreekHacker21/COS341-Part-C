@@ -29,8 +29,8 @@ public class Main {
         Parser parser = new Parser(result, fileName);
         parser.parse();
         Node root = parser.syntaxTree();
-        //printTree(root, "", true);
-        //parentTest(root.children.get(0));
+        // printTree(root, "", true);
+        // parentTest(root.children.get(0));
         Scope scope = new Scope(root);
         root = scope.run();
         System.out.println("Tree with scopes: ");
@@ -39,23 +39,24 @@ public class Main {
         System.out.println("\nScope hierachy simplified: ");
         printScopeHierachy(scopeInfo, "", true);
         leafNodes = new LinkedList<>();
-        leafNodes(root);
-        //printLeafNodes();
+        //leafNodes(root);
+        printLeafNodes();
         SemanticRules semanticRules = new SemanticRules(root, scopeInfo, leafNodes);
-        if(semanticRules.analysis()==1){
+        if (semanticRules.analysis() == 1) {
             return;
         }
-        semanticRules.displayProcTable();
-        semanticRules.displayVarTable();
+        // semanticRules.displayProcTable();
+        // semanticRules.displayVarTable();
         // Create a new intermediate code generator
-        IntermediateCodeGenerator generator = new IntermediateCodeGenerator(root, leafNodes, scopeInfo, semanticRules.ProcedureTable, semanticRules.VariableTable);
+        IntermediateCodeGenerator generator = new IntermediateCodeGenerator(root, leafNodes, scopeInfo,
+                semanticRules.ProcedureTable, semanticRules.VariableTable, fileName);
         // Generate the intermediate code
         generator.generate();
 
     }
 
-    public static void printLeafNodes(){
-        for(int i = 0; i < leafNodes.size(); i++){
+    public static void printLeafNodes() {
+        for (int i = 0; i < leafNodes.size(); i++) {
             System.out.println(leafNodes.get(i).value);
         }
     }
