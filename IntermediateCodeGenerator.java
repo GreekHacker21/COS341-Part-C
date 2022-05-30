@@ -77,10 +77,33 @@ public class IntermediateCodeGenerator {
                 ProcDefs(SyntaxTree.children.get(i));
             }
         }
+        addLine("MAIN:");
+        for(int i = 0; i < SyntaxTree.children.size(); i++){
+            if(SyntaxTree.children.get(i).value.equals("Algorithm")){
+                Algorithm(SyntaxTree.children.get(i));
+            }
+        }
+        addLine("END");
     }
 
     public void ProcDefs(Node n){
-        
+        n = n.children.get(0);
+        addLine(n.children.get(1).children.get(0).value + ":");
+        for(int i = 0; i < n.children.size(); i++){
+            if(n.children.get(i).value.equals("ProcDefs")){
+                ProcDefs(n.children.get(i));
+            }
+        }
+        for(int i = 0; i < n.children.size(); i++){
+            if(n.children.get(i).value.equals("Algorithm")){
+                Algorithm(n.children.get(i));
+            }
+        }
+        addLine("RETURN");
+    }
+
+    public void Algorithm(Node n){
+
     }
 
 

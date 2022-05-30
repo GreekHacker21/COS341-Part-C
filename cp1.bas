@@ -1,1 +1,15 @@
 10 GOTO MAIN
+20 hello:
+30 world:
+40 city:
+50 town:
+60 street:
+70 RETURN
+80 RETURN
+90 RETURN
+100 RETURN
+110 star:
+120 RETURN
+130 RETURN
+140 MAIN:
+150 END
