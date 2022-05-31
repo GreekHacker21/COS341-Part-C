@@ -14,6 +14,7 @@ public class Node {
         id = counter++;
         value = v;
         children = new LinkedList<>();
+        type = "";
     }
 
     Node(String v, String t){

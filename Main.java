@@ -39,14 +39,14 @@ public class Main {
         System.out.println("\nScope hierachy simplified: ");
         printScopeHierachy(scopeInfo, "", true);
         leafNodes = new LinkedList<>();
-        //leafNodes(root);
-        printLeafNodes();
+        leafNodes(root);
+        //printLeafNodes();
         SemanticRules semanticRules = new SemanticRules(root, scopeInfo, leafNodes);
         if (semanticRules.analysis() == 1) {
             return;
         }
-        // semanticRules.displayProcTable();
-        // semanticRules.displayVarTable();
+        semanticRules.displayProcTable();
+        semanticRules.displayVarTable();
         // Create a new intermediate code generator
         IntermediateCodeGenerator generator = new IntermediateCodeGenerator(root, leafNodes, scopeInfo,
                 semanticRules.ProcedureTable, semanticRules.VariableTable, fileName);
@@ -87,7 +87,7 @@ public class Main {
     }
 
     public static void printTreeWithScope(Node n, String indent, boolean last) {
-        System.out.println(indent + "+- " + n.value + " (nodeID: " + n.id + ", scope: " + n.scopeID + ")");
+        System.out.println(indent + "+- " + n.value + " (nodeID: " + n.id + ", scope: " + n.scopeID + ",type: " + n.type  + ")");
         indent += last ? "   " : "|  ";
 
         for (int i = 0; i < n.children.size(); i++) {

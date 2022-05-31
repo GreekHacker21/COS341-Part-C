@@ -3,15 +3,33 @@ proc hello {
         proc city {
             proc town {
                 proc street{
+                    output := "INPUT NUMBER";
+                    output := input(numinputvalue);
                     in := "HELLO";
                     sheldon := "LEONARD";
                     bazinga[0] := 0;
                     call street;
+                    in := "WHILELOOP";
+                    while(true)do{
+                        in := "YES";
+                    };
+                    in := "DOWHILE";
+                    do{
+                        in := "NO";
+                    }until(true);
+                    in := "FINISHED";
+                    if(larger(5,2)) then {
+                        output:= "5 LARGER";
+                        inputvalue := 5;
+                    }else{
+                        output:= "5 SMALLER";
+                    };
                     return;
                 },
                 call town;
                 return;
                 string in;
+                num inputvalue;
             },
             call city;
             return ;

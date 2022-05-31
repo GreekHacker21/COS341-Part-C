@@ -24,7 +24,7 @@ public class SemanticRules {
         try {
             Procedures();
             Variables();
-            //TypeChecking();
+            TypeChecking();
             //ValueFlowAnalysis();
             return 0;
         } catch (SemanticError error) {
