@@ -1,5 +1,5 @@
-10 GoTo main
-20 main:
+10 GoTo 20
+20
 30 Input A
 40 Let MIN = -1
 50 Print "PRINT #1"
@@ -12,5 +12,3 @@
 120 Let test(50) = 5
 130 Print test(50)
 140 End
-150 proc1:
-160 Let MAX = 5

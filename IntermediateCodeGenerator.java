@@ -65,7 +65,7 @@ public class IntermediateCodeGenerator {
     }
 
     public void generate() {
-
+        makeArrayDeclarations
         createFile();
         generateCode();
         // generateProcs();
