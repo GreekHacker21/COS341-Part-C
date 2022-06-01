@@ -80,7 +80,9 @@ public class IntermediateCodeGenerator {
             fileOutput = fileOutput.replaceAll("GOSUB " + procs.get(i)[0], "GOSUB " + procs.get(i)[1]);
             fileOutput = fileOutput.replaceAll("GOTO " + procs.get(i)[0], "GOTO " + procs.get(i)[1]);
         }
-        fileOutput = fileOutput.toUpperCase();
+        fileOutput = fileOutput.toUpperCase(); // uppercase everything
+        fileOutput = fileOutput.replaceAll("TRUE", "1"); // true into 1
+        fileOutput = fileOutput.replaceAll("FALSE", "0"); // false into 0
     }
 
     public void generateCode() {
@@ -183,7 +185,7 @@ public class IntermediateCodeGenerator {
         int currLine = lineNumber;
         Node expr = n.children.get(2);
         String result = Expr(expr, 0);
-        String assignLine = "IF (" + result + ") THEN GOTO REPLACE1"+currLine;
+        String assignLine = "IF (" + result + ") THEN GOTO REPLACE1" + currLine;
         addLine(assignLine);
 
         for (int i = 0; i < n.children.size(); i++) {
@@ -191,15 +193,15 @@ public class IntermediateCodeGenerator {
                 Alternat(n.children.get(i));
             }
         }
-        addLine("GOTO REPLACE2"+currLine);
-        fileOutput = fileOutput.replace("REPLACE1"+currLine, lineNumber + 10 + "");
+        addLine("GOTO REPLACE2" + currLine);
+        fileOutput = fileOutput.replace("REPLACE1" + currLine, lineNumber + 10 + "");
 
         for (int i = 0; i < n.children.size(); i++) {
             if (n.children.get(i).value.equals("Algorithm")) {
                 Algorithm(n.children.get(i));
             }
         }
-        fileOutput = fileOutput.replace("REPLACE2"+currLine, lineNumber + 10 + "");
+        fileOutput = fileOutput.replace("REPLACE2" + currLine, lineNumber + 10 + "");
 
     }
 
@@ -240,16 +242,16 @@ public class IntermediateCodeGenerator {
                 }
             }
             String result = Expr(expr, 0);
-            addLine("IF (" + result + ") THEN GOTO " + String.valueOf(beginLine+20));
-            addLine("GOTO REPLACE2"+currLine);
+            addLine("IF (" + result + ") THEN GOTO " + String.valueOf(beginLine + 20));
+            addLine("GOTO REPLACE2" + currLine);
             for (int i = 0; i < n.children.size(); i++) {
                 if (n.children.get(i).value.equals("Algorithm")) {
                     Algorithm(n.children.get(i));
                 }
             }
             addLine("GOTO " + beginLine);
-            fileOutput = fileOutput.replace("REPLACE2"+currLine, String.valueOf(lineNumber + 10));
-            
+            fileOutput = fileOutput.replace("REPLACE2" + currLine, String.valueOf(lineNumber + 10));
+
         }
 
     }
@@ -267,7 +269,7 @@ public class IntermediateCodeGenerator {
                 return n.children.get(0).value;
             case "Var":
                 s = "";
-                if (checkTypeFromNodeID(n.children.get(0).id) == "S") {
+                if (checkTypeFromNodeID(n.children.get(0).children.get(0).id) == "S") {
                     s = "$";
                 }
                 if (level == 0) {
@@ -277,7 +279,7 @@ public class IntermediateCodeGenerator {
                 }
             case "Field":
                 s = "";
-                if (checkTypeFromNodeID(n.children.get(0).id) == "S") {
+                if (checkTypeFromNodeID(n.children.get(0).children.get(0).id) == "S") {
                     s = "$";
                 }
                 String field = "";
@@ -293,9 +295,32 @@ public class IntermediateCodeGenerator {
                 }
                 return field;
             case "BinOp":
-                break;
+                return BinOp(n, level);
             case "UnOp":
-                break;
+                return UnOp(n, level);
+        }
+        return "";
+    }
+
+    // BinOp → and(Expr,Expr)
+    // BinOp → or(Expr,Expr)
+    // BinOp → eq(Expr,Expr)
+    // BinOp → larger(Expr,Expr)
+    // BinOp → add(Expr,Expr)
+    // BinOp → sub(Expr,Expr)
+    // BinOp → mult(Expr,Expr)
+    public String BinOp(Node n, int level) {
+        return "";
+    }
+
+    // UnOp → input(Var)
+    // UnOp → not(Expr)
+    public String UnOp(Node n, int level) {
+        if (n.children.get(0).value.equals("input")) {
+            String s = "";
+            if (checkTypeFromNodeID(n.children.get(2).children.get(0).children.get(0).id) == "S") {
+                s = "$";
+            }
         }
         return "";
     }
