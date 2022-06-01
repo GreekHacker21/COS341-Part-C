@@ -65,7 +65,7 @@ public class IntermediateCodeGenerator {
     }
 
     public void generate() {
-        makeArrayDeclarations
+        //makeArrayDeclarations
         createFile();
         generateCode();
         // generateProcs();
@@ -93,6 +93,17 @@ public class IntermediateCodeGenerator {
         }
         // addLine("MAIN:");
         addLine("");
+        for(int i = 0; i < varTable.rows.size(); i++){
+            if(varTable.rows.elementAt(i).isDeclaration&&varTable.rows.elementAt(i).scopeID==0&&varTable.rows.elementAt(i).isArray){
+                Node size = new Node("");
+                for(int j = 0 ; j < leafNodes.size(); j++){
+                    if(leafNodes.get(j).id==varTable.rows.elementAt(i).nodeID){
+                        size = leafNodes.get(j-4);
+                    }
+                }
+                addLine("DIM " + varTable.rows.elementAt(i).value + "(" + size.value + ")");
+            }
+        }
         String[] added = { "MAIN", String.valueOf(lineNumber + 10) };
         procs.add(added);
         for (int i = 0; i < SyntaxTree.children.size(); i++) {
@@ -107,6 +118,17 @@ public class IntermediateCodeGenerator {
         n = n.children.get(0);
         // addLine(n.children.get(1).children.get(0).value + ":");
         addLine("");
+        for(int i = 0; i < varTable.rows.size(); i++){
+            if(varTable.rows.elementAt(i).isDeclaration&&varTable.rows.elementAt(i).scopeID==n.scopeID&&varTable.rows.elementAt(i).isArray){
+                Node size = new Node("");
+                for(int j = 0 ; j < leafNodes.size(); j++){
+                    if(leafNodes.get(j).id==varTable.rows.elementAt(i).nodeID){
+                        size = leafNodes.get(j-4);
+                    }
+                }
+                addLine("DIM " + varTable.rows.elementAt(i).value + "(" + size.value + ")");
+            }
+        }
         String[] added = { n.children.get(1).children.get(0).value, String.valueOf(lineNumber + 10) };
         procs.add(added);
         for (int i = 0; i < n.children.size(); i++) {

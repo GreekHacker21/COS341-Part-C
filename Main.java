@@ -40,7 +40,7 @@ public class Main {
         printScopeHierachy(scopeInfo, "", true);
         leafNodes = new LinkedList<>();
         leafNodes(root);
-        //printLeafNodes();
+        printLeafNodes();
         SemanticRules semanticRules = new SemanticRules(root, scopeInfo, leafNodes);
         if (semanticRules.analysis() == 1) {
             return;
