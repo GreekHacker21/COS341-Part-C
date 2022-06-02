@@ -36,3 +36,6 @@ The program will output semantic errors if the semantic rules have been violated
 The program will print a syntax tree with the all the nodes (with their nodeID and scopeID).
 A hierachy of the scopeIDs will also be displayed.
 Lastly the Procedure and Variable symbol table will be displayed if there are no procedure or variable rule violations.
+
+#Part C Update:
+The program will print unncessary info on the command line but will create the .bas file of the file name chosen.

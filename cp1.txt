@@ -1,71 +1,56 @@
-proc hello {
-    proc world {
-        proc city {
-            proc town {
-                proc street{
-                    output := "INPUT NUMBER";
-                    output := input(numinputvalue);
-                    in := "HELLO";
-                    sheldon := "LEONARD";
-                    bazinga[0] := 0;
-                    call street;
-                    in := "WHILELOOP";
-                    while(true)do{
-                        in := "YES";
-                    };
-                    in := "DOWHILE";
-                    do{
-                        in := "NO";
-                    }until(true);
-                    in := "FINISHED";
-                    if(larger(5,2)) then {
-                        output:= "5 LARGER";
-                        inputvalue := 5;
-                    }else{
-                        output:= "5 SMALLER";
-                    };
-                    return;
-                },
-                call town;
-                return;
-                string in;
-                num inputvalue;
-            },
-            call city;
-            return ;
-        } ,
-        correct := " HELLO WORLD" ;
-        in := input ( in ) ;
-        return ;
-        string correct ;
-        string in ;
-        string sheldon;
-        arr num[5] bazinga;
-    } ,
-    proc star {
-        correct := " HELLO WORLD" ;
-        god := 21;
-        in := input ( in ) ;
-        return ;
-        string correct ;
-        string in ;
-    } ,
-    call world;
-    call star;
-    return ;
-    num god;
-} ,
+proc yeet {
+    yes := 1;
+    test := "YEET";
+    test := input(test);
+    god := test;
+    output:=yes;
+    output:=test;
+    output:=god;
+    return;
+    num yes;
+    string test;
+    string god;
+},
+
 main {
-    call hello;
+    call yeet;
+    output:="ADD 2 AND 3";
+    check[0] := 2;
+    check[1] := 3;
+    three := 3;
+    check[2] := add(check[0],mult(three,check[1]));
+    output:="CHECK0";
+    output:=check[0];
+    output:="THREE";
+    output:=three;
+    output:="CHECK2";
+    output:=check[2];
+    hat := 1;
+    test := 1;
+    hold[0] := true;
+    hold[test] := true;
+    output := and(hold[0],hold[test]);
     hello := input ( hello ) ;
+    hello := 1;
     test[0] := 10;
     hat := true;
-    if ( or ( eq ( hello , 0 ) , larger ( hello , 6 ) ) ) 
+    output := "CHANGE HAT";
+    output:=not(true);
+    hat := not(true);
+    output := "HAT DISPLAY";
+    output := hat;
+    if ( hat ) 
     then {
-    output := "IS ZERO" ;
-    } ;
+    output := "IS TRU" ;
+    } else {
+        output := "IS FALSE";
+    };
     halt ; 
     num hello ;
     bool hat ;
     arr num[10] test;
+    arr bool[2] hold;
+    num test;
+    arr num[4] check;
+    num three;
 }

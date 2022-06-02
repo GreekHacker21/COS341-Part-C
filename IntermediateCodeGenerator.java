@@ -15,6 +15,8 @@ public class IntermediateCodeGenerator {
     int lineNumber;
     String fileName;
     public LinkedList<String[]> procs;
+    public LinkedList<String[]> varBasicNames;
+    public int aCount, vCount;
 
     IntermediateCodeGenerator(Node sT, LinkedList<Node> lN, ScopeNode scopeInfo, SymbolTable pT, SymbolTable vT,
             String fN) {
@@ -27,6 +29,9 @@ public class IntermediateCodeGenerator {
         lineNumber = 0;
         fileName = fN;
         procs = new LinkedList<>();
+        varBasicNames = new LinkedList<>();
+        aCount = 0;
+        vCount = 0;
     }
 
     public void addLine(String instruction) {
@@ -64,10 +69,51 @@ public class IntermediateCodeGenerator {
         addLine("GOTO MAIN");
     }
 
+    public String checkIfAdded(String value, int scopeID) {
+        for (int i = 0; i < varBasicNames.size(); i++) {
+            if (varBasicNames.get(i)[0].equals(value) && Integer.parseInt(varBasicNames.get(i)[1]) == scopeID) {
+                return varBasicNames.get(i)[2];
+            }
+        }
+        String varName = "";
+        if (value.contains("(")) {
+            varName += "a" + aCount;
+            aCount++;
+        } else {
+            varName += "v" + vCount;
+            vCount++;
+        }
+        System.out.println(value);
+        String[] add = { value, String.valueOf(scopeID), varName };
+        varBasicNames.add(add);
+        return varName;
+    }
+
+    // public void generateBASICVarNames(){
+    // for(int i = 0; i < varBasicNames.size(); i++){
+    // if (varBasicNames.get(i)[0].contains("(")){
+    // varBasicNames.get(i)[2] = "a" + aCount;
+    // aCount++;
+    // }else{
+    // varBasicNames.get(i)[2] = "v" + vCount;
+    // vCount++;
+    // }
+
+    // fileOutput += fileOutput.replace(varBasicNames.get(i)[0],
+    // varBasicNames.get(i)[2]);
+    // }
+    // }
+
+    // public void addVarName(String name) {
+    // String[] varName = {name, ""};
+    // varBasicNames.add(varName);
+    // }
+
     public void generate() {
-        //makeArrayDeclarations
+        // makeArrayDeclarations
         createFile();
         generateCode();
+        // generateBASICVarNames();
         // generateProcs();
         // generateMain();
         fixSubProcs();
@@ -76,7 +122,6 @@ public class IntermediateCodeGenerator {
 
     public void fixSubProcs() {
         for (int i = 0; i < procs.size(); i++) {
-            System.out.println(procs.get(i)[0] + "\t" + procs.get(i)[1]);
             fileOutput = fileOutput.replaceAll("GOSUB " + procs.get(i)[0], "GOSUB " + procs.get(i)[1]);
             fileOutput = fileOutput.replaceAll("GOTO " + procs.get(i)[0], "GOTO " + procs.get(i)[1]);
         }
@@ -91,20 +136,24 @@ public class IntermediateCodeGenerator {
                 ProcDefs(SyntaxTree.children.get(i));
             }
         }
+        String[] added = { "MAIN", String.valueOf(lineNumber + 10) };
         // addLine("MAIN:");
-        addLine("");
-        for(int i = 0; i < varTable.rows.size(); i++){
-            if(varTable.rows.elementAt(i).isDeclaration&&varTable.rows.elementAt(i).scopeID==0&&varTable.rows.elementAt(i).isArray){
+        //addLine("");
+        for (int i = 0; i < varTable.rows.size(); i++) {
+            if (varTable.rows.elementAt(i).isDeclaration && varTable.rows.elementAt(i).scopeID == 0
+                    && varTable.rows.elementAt(i).isArray) {
                 Node size = new Node("");
-                for(int j = 0 ; j < leafNodes.size(); j++){
-                    if(leafNodes.get(j).id==varTable.rows.elementAt(i).nodeID){
-                        size = leafNodes.get(j-4);
+                for (int j = 0; j < leafNodes.size(); j++) {
+                    if (leafNodes.get(j).id == varTable.rows.elementAt(i).nodeID) {
+                        size = leafNodes.get(j - 4);
                     }
                 }
-                addLine("DIM " + varTable.rows.elementAt(i).value + "(" + size.value + ")");
+                String result = checkIfAdded(varTable.rows.elementAt(i).value + "(",
+                        varTable.rows.elementAt(i).scopeID);
+                // addLine("DIM " + varTable.rows.elementAt(i).value + "(" + size.value + ")");
+                addLine("DIM " + result + "(" + size.value + ")");
             }
         }
-        String[] added = { "MAIN", String.valueOf(lineNumber + 10) };
         procs.add(added);
         for (int i = 0; i < SyntaxTree.children.size(); i++) {
             if (SyntaxTree.children.get(i).value.equals("Algorithm")) {
@@ -116,20 +165,21 @@ public class IntermediateCodeGenerator {
 
     public void ProcDefs(Node n) {
         n = n.children.get(0);
+        String[] added = { n.children.get(1).children.get(0).value, String.valueOf(lineNumber + 10) };
         // addLine(n.children.get(1).children.get(0).value + ":");
-        addLine("");
-        for(int i = 0; i < varTable.rows.size(); i++){
-            if(varTable.rows.elementAt(i).isDeclaration&&varTable.rows.elementAt(i).scopeID==n.scopeID&&varTable.rows.elementAt(i).isArray){
+        //addLine("");
+        for (int i = 0; i < varTable.rows.size(); i++) {
+            if (varTable.rows.elementAt(i).isDeclaration && varTable.rows.elementAt(i).scopeID == n.scopeID
+                    && varTable.rows.elementAt(i).isArray) {
                 Node size = new Node("");
-                for(int j = 0 ; j < leafNodes.size(); j++){
-                    if(leafNodes.get(j).id==varTable.rows.elementAt(i).nodeID){
-                        size = leafNodes.get(j-4);
+                for (int j = 0; j < leafNodes.size(); j++) {
+                    if (leafNodes.get(j).id == varTable.rows.elementAt(i).nodeID) {
+                        size = leafNodes.get(j - 4);
                     }
                 }
                 addLine("DIM " + varTable.rows.elementAt(i).value + "(" + size.value + ")");
             }
         }
-        String[] added = { n.children.get(1).children.get(0).value, String.valueOf(lineNumber + 10) };
         procs.add(added);
         for (int i = 0; i < n.children.size(); i++) {
             if (n.children.get(i).value.equals("ProcDefs")) {
@@ -172,28 +222,37 @@ public class IntermediateCodeGenerator {
         Node lhs = n.children.get(0);
         Node expr = n.children.get(2);
         String s;
+        String result;
         switch (lhs.children.get(0).value) {
             case "output":
                 assignLine += "PRINT ";
                 break;
             case "Var":
                 s = "";
-                if (checkTypeFromNodeID(lhs.children.get(0).children.get(0).children.get(0).id) == "S") {
+                if (checkTypeFromNodeID(lhs.children.get(0).children.get(0).children.get(0).id).equals("S")) {
                     s = "$";
                 }
-                assignLine += "LET " + lhs.children.get(0).children.get(0).children.get(0).value + s + " = ";
+                result = checkIfAdded(lhs.children.get(0).children.get(0).children.get(0).value + "",
+                        lhs.children.get(0).children.get(0).children.get(0).scopeID);
+                // assignLine += "LET " +
+                // lhs.children.get(0).children.get(0).children.get(0).value + s + " = ";
+                assignLine += "LET " + result + s + " = ";
                 break;
             case "Field":
                 String field = "LET ";
                 s = "";
-                if (checkTypeFromNodeID(lhs.children.get(0).children.get(0).children.get(0).id) == "S") {
+                if (checkTypeFromNodeID(lhs.children.get(0).children.get(0).children.get(0).id).equals("S")) {
                     s = "$";
                 }
-                field = lhs.children.get(0).children.get(0).children.get(0).value + s;
+                result = checkIfAdded(lhs.children.get(0).children.get(0).children.get(0).value + "(",
+                        lhs.children.get(0).children.get(0).children.get(0).scopeID);
+                field = result + s;
                 if (lhs.children.get(0).children.get(2).value.equals("Const")) {
                     field += "(" + lhs.children.get(0).children.get(2).children.get(0).value + ")";
                 } else {
-                    field += "(" + lhs.children.get(0).children.get(2).children.get(0).children.get(0).value + ")";
+                    String temp = checkIfAdded(lhs.children.get(0).children.get(2).children.get(0).children.get(0).value,
+                    lhs.children.get(0).children.get(2).children.get(0).children.get(0).scopeID);
+                    field += "(" + temp + ")";
                 }
                 assignLine += field + " = ";
                 break;
@@ -286,34 +345,37 @@ public class IntermediateCodeGenerator {
     public String Expr(Node n, int level) {
         n = n.children.get(0);
         String s;
+        String result;
         switch (n.value) {
             case "Const":
                 return n.children.get(0).value;
             case "Var":
                 s = "";
-                if (checkTypeFromNodeID(n.children.get(0).children.get(0).id) == "S") {
+                if (checkTypeFromNodeID(n.children.get(0).children.get(0).id).equals("S")) {
                     s = "$";
                 }
-                if (level == 0) {
-                    return n.children.get(0).value + s;
-                } else {
-                    return n.children.get(0).value + level + s;
-                }
+                result = checkIfAdded(n.children.get(0).children.get(0).value + "",
+                        n.children.get(0).children.get(0).scopeID);
+                // return n.children.get(0).value + s;
+                return result + s;
+
             case "Field":
                 s = "";
-                if (checkTypeFromNodeID(n.children.get(0).children.get(0).id) == "S") {
+                if (checkTypeFromNodeID(n.children.get(0).children.get(0).id).equals("S")) {
                     s = "$";
                 }
+                result = checkIfAdded(n.children.get(0).children.get(0).value + "(",
+                        n.children.get(0).children.get(0).scopeID);
+                //System.out.println(result);
                 String field = "";
-                if (level == 0) {
-                    field = n.children.get(0).children.get(0).value;
+                // field = n.children.get(0).children.get(0).value;
+                field = result + s;
+                if (n.children.get(2).value.equals("Const")) {
+                    field += "(" + n.children.get(2).children.get(0).value + ")";
                 } else {
-                    field = n.children.get(0).children.get(0).value + level;
-                }
-                if (n.children.get(0).value.equals("Const")) {
-                    field += s + "(" + n.children.get(0).children.get(0).value + ")";
-                } else {
-                    field += s + "(" + n.children.get(0).children.get(0).children.get(0).value + ")";
+                    String temp = checkIfAdded(n.children.get(2).children.get(0).children.get(0).value,
+                            n.children.get(2).children.get(0).children.get(0).scopeID);
+                    field += "(" + temp + ")";
                 }
                 return field;
             case "BinOp":
@@ -332,6 +394,42 @@ public class IntermediateCodeGenerator {
     // BinOp → sub(Expr,Expr)
     // BinOp → mult(Expr,Expr)
     public String BinOp(Node n, int level) {
+        String expr1 = Expr(n.children.get(2), level + 1);
+        String expr2 = Expr(n.children.get(4), level + 1);
+        switch (n.children.get(0).value) {
+            case "and":
+                addLine("LET A" + level + " = 0");
+                addLine("IF (" + expr1 + ") THEN GOTO " + String.valueOf(lineNumber + 30));
+                addLine("GOTO " + String.valueOf(lineNumber + 30));
+                addLine("IF (" + expr2 + ") THEN GOTO " + String.valueOf(lineNumber + 30));
+                addLine("GOTO " + String.valueOf(lineNumber + 30));
+                addLine("LET A" + level + " = 1");
+                return "A" + level;
+            case "or":
+                addLine("LET O" + level + " = 0");
+                addLine("IF (" + expr1 + ") THEN GOTO " + String.valueOf(lineNumber + 50));
+                addLine("GOTO " + String.valueOf(lineNumber + 30));
+                addLine("IF (" + expr2 + ") THEN GOTO " + String.valueOf(lineNumber + 30));
+                addLine("GOTO " + String.valueOf(lineNumber + 30));
+                addLine("LET O" + level + " = 1");
+                return "O" + level;
+            case "eq":
+                addLine("LET B" + level + " = " + expr1 + "=" + expr2);
+                // return expr1 + "=" + expr2;
+                return "B" + level;
+            case "larger":
+                addLine("LET B" + level + " = " + expr1 + ">" + expr2);
+                return "B" + level;
+            case "add":
+                addLine("LET B" + level + " = " + expr1 + "+" + expr2);
+                return "B" + level;
+            case "sub":
+                addLine("LET B" + level + " = " + expr1 + "-" + expr2);
+                return "B" + level;
+            case "mult":
+                addLine("LET B" + level + " = " + expr1 + "*" + expr2);
+                return "B" + level;
+        }
         return "";
     }
 
@@ -340,11 +438,29 @@ public class IntermediateCodeGenerator {
     public String UnOp(Node n, int level) {
         if (n.children.get(0).value.equals("input")) {
             String s = "";
-            if (checkTypeFromNodeID(n.children.get(2).children.get(0).children.get(0).id) == "S") {
+            System.out.println(n.children.get(2).children.get(0).children.get(0).value);
+            System.out.println(n.children.get(2).children.get(0).children.get(0).id);
+            System.out.println(checkTypeFromNodeID(n.children.get(2).children.get(0).children.get(0).id));
+            if (checkTypeFromNodeID(n.children.get(2).children.get(0).children.get(0).id).equals("S")) {
                 s = "$";
+                System.out.println("$");
             }
+            String result = checkIfAdded(n.children.get(2).children.get(0).children.get(0).value,
+                    n.children.get(2).children.get(0).children.get(0).scopeID);
+            addLine("INPUT " + result + s);
+            return result + s;
+
         }
-        return "";
+        addLine("LET U" + level + " = 0");
+        addLine("IF (UNOPREPLACE1) THEN GOTO UNOPREPLACE2");
+        addLine("GOTO UNOPREPLACE3");
+        String result = Expr(n.children.get(2), level + 1);
+        addLine("LET U" + level + " = 1");
+        fileOutput = fileOutput.replace("UNOPREPLACE1", result);
+        fileOutput = fileOutput.replace("UNOPREPLACE3", String.valueOf(lineNumber));
+        fileOutput = fileOutput.replace("UNOPREPLACE2", String.valueOf(lineNumber + 10));
+
+        return "U" + level;
     }
 
     // PCall → call userDefinedName
